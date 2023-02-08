@@ -7,8 +7,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-#@app.before_first_request
+@app.before_first_request
 def create_table():
+    db.drop_all()
     db.create_all()
     hero1=Personage('Вирджил')
     hero2 = Personage('Джахейра')
@@ -17,6 +18,12 @@ def create_table():
     db.session.add(hero2)
     db.session.add(hero3)
     db.session.commit()
+
+@app.route("/index")
+@app.route("/")
+def index():
+    hero=Personage.query.filter_by(id=1).first()
+    return render_template("index.html", hero=hero)
 
 @app.route("/personages")
 def personages_list():
